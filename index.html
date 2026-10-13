@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="數獨" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#007aff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="無廣告個人數獨 — Charlie Yip" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+    <title>數獨</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <header class="header">
+      <button type="button" class="icon-btn" id="settings-btn" aria-label="設定">⚙️</button>
+      <h1>數獨</h1>
+      <button type="button" class="icon-btn" id="new-btn" aria-label="新遊戲">＋</button>
+    </header>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="label">難度</div>
+        <div class="value" id="diff-label">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">時間</div>
+        <div class="value" id="timer">00:00</div>
+      </div>
+      <div class="stat">
+        <div class="label">錯誤</div>
+        <div class="value" id="mistakes">0</div>
+      </div>
+    </div>
+
+    <div class="board-wrap" id="board-wrap">
+      <div class="board" id="board" role="grid" aria-label="數獨棋盤"></div>
+      <div class="pause-overlay" id="pause-overlay">
+        暫停中
+        <span>點一下繼續</span>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button type="button" class="tool-btn" id="undo-btn" disabled>
+        <span class="icon">↩</span>
+        撤銷
+      </button>
+      <button type="button" class="tool-btn" id="redo-btn" disabled>
+        <span class="icon">↪</span>
+        重做
+      </button>
+      <button type="button" class="tool-btn" id="notes-btn">
+        <span class="icon">✎</span>
+        筆記
+      </button>
+      <button type="button" class="tool-btn" id="hint-btn">
+        <span class="badge">3</span>
+        <span class="icon">💡</span>
+        提示
+      </button>
+      <button type="button" class="tool-btn" id="pause-btn" disabled>
+        <span class="icon">⏸</span>
+        暫停
+      </button>
+    </div>
+
+    <div class="numpad">
+      <button type="button" class="num-btn" data-num="1">1</button>
+      <button type="button" class="num-btn" data-num="2">2</button>
+      <button type="button" class="num-btn" data-num="3">3</button>
+      <button type="button" class="num-btn" data-num="4">4</button>
+      <button type="button" class="num-btn" data-num="5">5</button>
+      <button type="button" class="num-btn" data-num="6">6</button>
+      <button type="button" class="num-btn" data-num="7">7</button>
+      <button type="button" class="num-btn" data-num="8">8</button>
+      <button type="button" class="num-btn" data-num="9">9</button>
+      <button type="button" class="num-btn clear" id="clear-btn">清除</button>
+    </div>
+
+    <!-- Home / first launch -->
+    <div class="modal" id="home-modal">
+      <div class="sheet centered">
+        <div class="home-hero">
+          <div class="logo">
+            <img src="./icons/icon.svg" alt="數獨" width="72" height="72" />
+          </div>
+          <h2>數獨</h2>
+          <p>無廣告 · 可離線 · 專為個人使用</p>
+        </div>
+        <div class="diff-grid">
+          <button type="button" class="diff-btn" data-diff="easy">
+            簡單 <span class="desc">適合暖身</span>
+          </button>
+          <button type="button" class="diff-btn" data-diff="medium">
+            中等 <span class="desc">經典挑戰</span>
+          </button>
+          <button type="button" class="diff-btn" data-diff="hard">
+            困難 <span class="desc">需要推論</span>
+          </button>
+          <button type="button" class="diff-btn" data-diff="expert">
+            專家 <span class="desc">硬核解題</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New game -->
+    <div class="modal" id="new-modal">
+      <div class="sheet">
+        <h2>新遊戲</h2>
+        <p class="subtitle">選擇難度</p>
+        <div class="diff-grid">
+          <button type="button" class="diff-btn" data-diff="easy">
+            簡單 <span class="desc">較多提示數字</span>
+          </button>
+          <button type="button" class="diff-btn" data-diff="medium">
+            中等 <span class="desc">平衡難度</span>
+          </button>
+          <button type="button" class="diff-btn" data-diff="hard">
+            困難 <span class="desc">較少提示數字</span>
+          </button>
+          <button type="button" class="diff-btn" data-diff="expert">
+            專家 <span class="desc">極少提示數字</span>
+          </button>
+        </div>
+        <button type="button" class="btn btn-ghost" data-close="new-modal">取消</button>
+      </div>
+    </div>
+
+    <!-- Confirm abandon -->
+    <div class="modal" id="confirm-modal">
+      <div class="sheet centered">
+        <h2>放棄目前遊戲？</h2>
+        <p class="subtitle">尚未完成的進度將會遺失</p>
+        <div class="sheet-actions">
+          <button type="button" class="btn btn-secondary" id="confirm-no">繼續玩</button>
+          <button type="button" class="btn btn-primary" id="confirm-yes">新遊戲</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="modal" id="settings-modal">
+      <div class="sheet">
+        <h2>設定</h2>
+        <p class="subtitle">個人偏好</p>
+
+        <div class="setting-row">
+          <div class="info">
+            <div class="title">自動檢查錯誤</div>
+            <div class="hint">填錯時以紅色標示，不阻擋輸入</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="set-autocheck" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <div class="info">
+            <div class="title">三錯挑戰模式</div>
+            <div class="hint">累積 3 次錯誤即結束本局</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="set-challenge" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <div class="info">
+            <div class="title">外觀</div>
+            <div class="hint">淺色 / 深色 / 跟隨系統</div>
+          </div>
+          <div class="theme-options">
+            <label
+              ><input type="radio" name="theme" value="light" /><span>淺色</span></label
+            >
+            <label
+              ><input type="radio" name="theme" value="dark" /><span>深色</span></label
+            >
+            <label
+              ><input type="radio" name="theme" value="system" checked /><span
+                >系統</span
+              ></label
+            >
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" data-close="settings-modal" style="width:100%;margin-top:12px">
+          完成
+        </button>
+      </div>
+    </div>
+
+    <!-- Win -->
+    <div class="modal" id="win-modal">
+      <div class="sheet centered">
+        <div class="emoji-big">🎉</div>
+        <h2>恭喜完成！</h2>
+        <p class="subtitle">太棒了</p>
+        <div class="win-stats">
+          <div>
+            <div class="wlabel">難度</div>
+            <div class="wvalue" id="win-diff">—</div>
+          </div>
+          <div>
+            <div class="wlabel">時間</div>
+            <div class="wvalue" id="win-time">00:00</div>
+          </div>
+          <div>
+            <div class="wlabel">錯誤</div>
+            <div class="wvalue" id="win-mistakes">0</div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" id="win-again" style="width:100%">
+          再來一局
+        </button>
+        <button type="button" class="btn btn-ghost" data-close="win-modal">關閉</button>
+      </div>
+    </div>
+
+    <!-- Lose -->
+    <div class="modal" id="lose-modal">
+      <div class="sheet centered">
+        <div class="emoji-big">😅</div>
+        <h2>本局結束</h2>
+        <p class="subtitle">已達 3 次錯誤（挑戰模式）</p>
+        <button type="button" class="btn btn-primary" id="lose-again" style="width:100%">
+          再試一次
+        </button>
+        <button type="button" class="btn btn-ghost" data-close="lose-modal">關閉</button>
+      </div>
+    </div>
+
+    <div class="generating" id="generating">
+      <div class="box">產生題目中…</div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="confetti" id="confetti"></div>
+
+    <script src="./js/sudoku.js"></script>
+    <script src="./js/game.js"></script>
+    <script src="./js/ui.js"></script>
+  </body>
+</html>
