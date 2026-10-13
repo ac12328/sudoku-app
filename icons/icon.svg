@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0A84FF"/>
+      <stop offset="100%" stop-color="#5E5CE6"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="url(#bg)"/>
+  <rect x="28" y="28" width="124" height="124" rx="14" fill="#fff" opacity="0.95"/>
+  <!-- grid -->
+  <g stroke="#1c1c1e" stroke-width="2" fill="none">
+    <rect x="36" y="36" width="108" height="108" rx="4"/>
+    <line x1="72" y1="36" x2="72" y2="144" stroke-width="1.5" opacity="0.35"/>
+    <line x1="108" y1="36" x2="108" y2="144" stroke-width="1.5" opacity="0.35"/>
+    <line x1="36" y1="72" x2="144" y2="72" stroke-width="1.5" opacity="0.35"/>
+    <line x1="36" y1="108" x2="144" y2="108" stroke-width="1.5" opacity="0.35"/>
+  </g>
+  <!-- numbers -->
+  <g font-family="-apple-system, Helvetica, sans-serif" font-weight="700" font-size="22" text-anchor="middle" fill="#007AFF">
+    <text x="54" y="60">5</text>
+    <text x="90" y="96">9</text>
+    <text x="126" y="132">3</text>
+  </g>
+  <g font-family="-apple-system, Helvetica, sans-serif" font-weight="700" font-size="22" text-anchor="middle" fill="#1c1c1e">
+    <text x="126" y="60">7</text>
+    <text x="54" y="132">2</text>
+  </g>
+</svg>
